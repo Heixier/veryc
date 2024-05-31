@@ -17,11 +17,8 @@ static	int	is_c_in_str(char c, const char *str)
 	if (str)
 	{
 		while (*str)
-		{
-			if (c == *str)
-				return (1);
-			str++;
-		}
+		if (c == *str++)
+			return (1);
 	}
 	return (0);
 }
