@@ -15,12 +15,19 @@
 void	*ft_calloc(size_t nmemb, size_t size)
 {
 	void	*output;
+	size_t	n;
 
-	output = malloc(nmemb * size);
+	if (nmemb == 0 || size == 0)
+		return (NULL);
+
+	n = nmemb * size;
+	if (n / nmemb != size)
+		return (NULL);
+
+	output = malloc(n);
 	if (!output)
 		return (output);
-	ft_bzero(output, (nmemb * size));
-	return (output);
+	return (ft_bzero(output, n), output);
 }
 
 // int	main(int argc, char **argv)
