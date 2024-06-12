@@ -2,20 +2,17 @@
 # define GET_NEXT_LINE_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 50
+#  define BUFFER_SIZE 15
 # endif
-
-typedef struct s_fstatus
-{
-	char	*buffer;
-	char	*newline_ptr;
-	char	*chunk;
-}			t_fstatus;
 
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <fcntl.h>
 # include <unistd.h>
+
+size_t	gnl_strlen(char *str);
+char	*gnl_strndup(char *str, size_t n);
+char	*find_newline(char *str);
 
 #endif
