@@ -6,7 +6,11 @@ char	*return_output_set_remainder(char **remainder, char *buffer)
 	char	*newline;
 
 	newline = find_newline(buffer);
-	WIP
+	output = gnl_strndup(buffer, newline - buffer);
+	*remainder = find_newline(remainder);
+	*remainder++;
+	printf("Output: %s\nRemainder: %s\n", output, *remainder);
+	return (output);
 }
 
 char	*get_next_line(int fd)
