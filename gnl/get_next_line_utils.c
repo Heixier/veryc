@@ -64,6 +64,7 @@ char	*find_newline(char *str)
 		{
 			if (*str == '\n')
 				return (str);
+			str++;
 		}
 	}
 	return (NULL);
