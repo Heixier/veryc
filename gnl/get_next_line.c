@@ -11,12 +11,10 @@ char	*return_output_set_remainder(char **remainder, char *buffer)
 	if (newline)
 		*remainder = newline + 1;
 	else
-		remainder = NULL;
-	printf("Output: %s\nRemainder: %s\n", output, *remainder);
-	return (output);
+		*remainder = NULL;
+	// printf("Output: %s || Remainder: %s\n", output, *remainder);
+	return (free(buffer), output);
 }
-
-this is broken ^^
 
 char	*get_next_line(int fd)
 {
@@ -45,7 +43,6 @@ char	*get_next_line(int fd)
 		return (return_output_set_remainder(&remainder, buffer));
 	free(remainder);
 	free(buffer);
-	remainder = NULL;
 	return (NULL);
 }
 
@@ -68,6 +65,7 @@ int main(int argc, char **argv)
 			return (0);
 		}
 		printf("%s", output);
+		free(output);
 	}
 	close(fd);
 	return (0);
