@@ -92,15 +92,14 @@ int	main(int argc, char **argv)
 	int fd = open(argv[1], O_RDONLY);
 	*running = '\0';
 
-	printf(MY_CYAN MY_BOLD"~~~~~~~~~~~~~~~~~~~~~~~~\n🔥 Interactive "
+	printf(MY_CYAN MY_BOLD"~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n🔥 Interactive "
 	MY_LIGHT_GREEN MY_UNDERLINE
-	"GNL" MY_CYAN MY_BOLD" viewer 🔥\n~~~~~~~~~~~~~~~~~~~~~~~~\n"MY_END);
+	"GNL" MY_CYAN MY_BOLD" viewer 🔥\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"MY_END);
 	printf("Current buffer size: "MY_RED MY_BOLD "%d\n" MY_END, BUFFER_SIZE);
 	printf("Enter \"!\" to quit || \"?\" to dump contents\n");
 	printf(MY_BLINK MY_LIGHT_PURPLE"BEGIN READ\n\n"MY_END);
 	while (1)
 	{
-		printf("[%ld] ", count);
 		output = get_next_line(fd);
 		if (*running == '?' && !output)
 		{
@@ -112,7 +111,11 @@ int	main(int argc, char **argv)
 			printf(MY_LIGHT_RED
 			"Nothing read! (EOF / Error) \"!\" to quit!\n"MY_END);
 		else
-			count++, printf(MY_LIGHT_GREEN"%s"MY_END, output);
+		{
+			count++;
+			printf("[%ld] ", count);
+			printf(MY_LIGHT_GREEN"%s"MY_END, output);
+		}
 		if (!(*running == '?'))
 		{
 			printf(MY_BLACK);
