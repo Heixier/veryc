@@ -149,6 +149,7 @@ int	main(int argc, char **argv)
 	MY_LIGHT_GREEN MY_UNDERLINE
 	"GNL" MY_CYAN MY_BOLD" viewer 🔥\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"MY_END);
 	printf("Current buffer size: "MY_RED MY_BOLD "%d\n" MY_END, BUFFER_SIZE);
+	printf("Enter any character to advance\n");
 	printf("Enter \"!\" to quit || \"?\" to dump contents\n");
 	printf(MY_BLINK MY_LIGHT_PURPLE"BEGIN READ\n\n"MY_END);
 	while (1)
