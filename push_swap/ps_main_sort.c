@@ -42,6 +42,7 @@ void	main_sort(t_list **a_head, t_list **b_head)
 		free(instr);
 		return ;
 	}
+	ps_push(b_head, a_head, STACK_B);
 	reset_instr(instr);
 	ps_refresh_lists(a_head, b_head);
 	while ((*a_head)-> head -> next)
