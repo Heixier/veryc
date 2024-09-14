@@ -106,8 +106,7 @@ void	set_best_move(t_instr *instr, t_list **a_head, t_list **b_head)
 		set_value_and_pos(candidate, traverse, pos);
 		set_target_pos(candidate, b_head);
 		set_movecount(candidate, a_head, b_head);
-		if (candidate -> moves < instr -> moves && \
-		candidate -> value != (*a_head)-> max_val)
+		if (candidate -> moves < instr -> moves)
 			copy_instr(instr, candidate);
 		pos++;
 		traverse = traverse -> next;
