@@ -59,7 +59,7 @@ do
 			fi
 		else
 			echo -en "\r\e[KProcessing... $i/$CHECKS"
-			out="$ARGS"
+			out=$(./push_swap "$ARGS")
     fi
 
 	count=$(echo "$out" | grep -vc "==")
