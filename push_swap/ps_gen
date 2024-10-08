@@ -42,11 +42,13 @@ if [[ "$3" == "--valgrind" ]] || [[ "$3" == "-v" ]]
 		MEMTEST=true
 fi
 
+# I hold no responsibility for these flags —rsiah
+
 RESULT=() # Initialise RESULT as an array
 tput sc
 for i in $(seq 1 "$CHECKS");
 do
-	ARGS=$(shuf -i 0-2147483648 -n "$SIZE" | while read line; do echo "$((line * (1 - 2 * (RANDOM % 2))))"; done | tr '\n' ' ') # "random" because seed is fixed
+	ARGS=$(shuf -i 0-2147483648 -n "$SIZE" | while read -r line; do echo "$((line * (1 - 2 * (RANDOM % 2))))"; done | tr '\n' ' ') # "random" because seed is fixed
 	if $MEMTEST
 		then
 			echo -en "$(tput rc; tput el)"
