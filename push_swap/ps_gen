@@ -2,47 +2,68 @@
 
 CHECKS=250
 SIZE=100
-NAME="ps_gen"
+PROG="push_swap"
 
-if [ "$1" == "--help" ] || [ "$1" == "-h" ]
-	then
-		echo  -e "Usage: $0 size times FLAGS\nGenerates random numbers for push_swap\n\n\
-OPTIONS (note: flags go at the back!):\n\n\
-	v-, --valgrind		checks for memory leaks (warning: takes more time!)\n
-Example: ./$NAME 100 250 -v\n
-Default: Tests $SIZE numbers $CHECKS times."
-		exit 0
-fi
-
-if [ -n "$1" ]
-	then
-		if [[ $1 =~ ^[-+]?[0-9]+$ ]] && (( $1 >= 0 ))
-			then SIZE=$1
-		else
-			echo -e "$0: invalid option -- '$1'"
-			echo "Try '-h' for more information."
-			exit 22
-		fi
-fi
-
-if [ -n "$2" ]
-	then
-		if [[ $2 =~ ^[-+]?[0-9]+$ ]] && (( $2 >= 0 ))
-			then CHECKS=$2
-		else
-			echo -e "$0: invalid option -- '$2'"
-			echo "Try '-h' for more information."
-			exit 22
-		fi
-fi
-
+OPTSTR=":s:c:n:hv"
 MEMTEST=false
-if [[ "$3" == "--valgrind" ]] || [[ "$3" == "-v" ]]
-	then
-		MEMTEST=true
-fi
 
-# I hold no responsibility for these flags —rsiah
+while getopts "$OPTSTR" opt
+	do
+		case "$opt" in
+			h)
+				echo  -e "Usage: $0 [OPTION]...\nGenerates random numbers for push_swap\n\n\
+OPTIONS:\n\n\
+	-s 		specifies how many numbers to check (default: 100)
+	-c		specifies how many times to check (default: 250)
+	-n		specifies a different program name (default: "push_swap")
+	-v		checks for memory leaks (warning: takes more time!)\n
+Example: ./$0 -c 100 -v 250 -v"
+				exit 0
+				;;
+			s)
+				if [[ "$OPTARG" =~ ^[-+]?[0-9]+$ ]] && (( "$OPTARG" >= 0 ))
+					then SIZE="$OPTARG"
+				else
+					echo -e "$0: invalid option -- '"$OPTARG"'"
+					echo "Try '-h' for more information."
+					exit 22
+				fi
+				;;
+			c)
+				if [[ "$OPTARG" =~ ^[-+]?[0-9]+$ ]] && (( "$OPTARG" >= 0 ))
+					then CHECKS="$OPTARG"
+				else
+					echo -e "$0: invalid option -- '"$OPTARG"'"
+					echo "Try '-h' for more information."
+					exit 22
+				fi
+				;;
+			v)
+				MEMTEST=true
+				;;
+			n)
+				PROG="$OPTARG"
+				if [ -x $PROG ]
+					then
+						echo "Running '"$PROG"'"
+					else
+						echo "Error: could not find '"$PROG"'"
+						exit 2
+				fi
+				;;
+			?)
+				echo -e "$0: invalid option -- '"$OPTARG"'"
+				echo "Try '-h' for more information."
+				exit 22
+				;;
+		esac
+	done
+
+if ! [ -x "$PROG" ]
+	then
+		echo -e "'"$PROG"' not found/not executable\n'-h' for more information."
+		exit 2
+fi
 
 RESULT=() # Initialise RESULT as an array
 tput sc
@@ -53,7 +74,7 @@ do
 		then
 			echo -en "$(tput rc; tput el)"
 			echo -en "Processing... $i/$CHECKS (note: valgrind can take a while)"
-			out=$(valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes ./push_swap "$ARGS" 2>&1) # Redirect stderr to stdout
+			out=$(valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s ./"$PROG" "$ARGS" 2>&1) # Redirect stderr to stdout
 			if echo "$out" | grep -E "definitely lost|indirectly lost|possibly lost|ERROR SUMMARY: [^0]|Invalid" > /dev/null
 				then
 					echo -e "\n\e[1;91m$out\e[0m"
@@ -61,9 +82,8 @@ do
 			fi
 		else
 			echo -en "\r\e[KProcessing... $i/$CHECKS"
-			out=$(./push_swap "$ARGS")
+			out=$(./"$PROG" "$ARGS")
     fi
-
 	count=$(echo "$out" | grep -vc "==")
 	RESULT+=("$count")
 done
