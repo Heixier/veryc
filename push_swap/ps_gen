@@ -1,34 +1,38 @@
 #!/bin/bash
 
+#rsiah is not responsible for any damages/loss of life resulting from the use of this script
+
 CHECKS=250
 SIZE=100
 PROG="push_swap"
 
-OPTSTR=":s:c:n:hv"
+OPTSTR=":s:c:n:t:ahv"
 MEMTEST=false
+VERBOSE=false
+TARGET=0
 
 while getopts "$OPTSTR" opt
 	do
 		case "$opt" in
 			h)
-				echo  -e "Usage: $0 [OPTION]...\nGenerates random numbers for push_swap\n\n\
-OPTIONS:\n\n\
-	-s 		specifies how many numbers to check (default: 100)
-	-c		specifies how many times to check (default: 250)
-	-n		specifies a different program name (default: "push_swap")
-	-v		checks for memory leaks (warning: takes more time!)\n
-Example: ./$0 -c 100 -v 250 -v"
-				exit 0
-				;;
+				echo  -e "Usage: $0 [OPTION]...\nBenchmarking tool for push_swap.\n\n\
+OPTIONS:\n\
+	-s 		numbers to check (default: 100)
+	-c		test count (default: 250)
+	-n		program name (default: \"push_swap\")
+	-t		set target (default: disabled)
+	-a		display numbers that exceed '-t' target
+	-v		valgrind (warning: takes more time!)
+
+Example: ./$0 -s 100 -c 300 -t 700"
+				exit 0 ;;
 			s)
 				if [[ "$OPTARG" =~ ^[-+]?[0-9]+$ ]] && (( "$OPTARG" >= 0 ))
 					then SIZE="$OPTARG"
 				else
-					echo -e "$0: invalid option -- '"$OPTARG"'"
-					echo "Try '-h' for more information."
+					printf "%s: invalid option -- '%s'\nTry '-h' for more information.\n" "$0" "$OPTARG"
 					exit 22
-				fi
-				;;
+				fi ;;
 			c)
 				if [[ "$OPTARG" =~ ^[-+]?[0-9]+$ ]] && (( "$OPTARG" >= 0 ))
 					then CHECKS="$OPTARG"
@@ -36,61 +40,91 @@ Example: ./$0 -c 100 -v 250 -v"
 					echo -e "$0: invalid option -- '"$OPTARG"'"
 					echo "Try '-h' for more information."
 					exit 22
-				fi
-				;;
+				fi ;;
 			v)
-				MEMTEST=true
-				;;
+				MEMTEST=true ;;
 			n)
 				PROG="$OPTARG"
 				if [ -x $PROG ]
 					then
 						echo "Running '"$PROG"'"
 					else
-						echo "Error: could not find '"$PROG"'"
+						echo "$0: could not find/execute '"$PROG"'"
 						exit 2
-				fi
-				;;
+				fi ;;
+			t)
+				echo -e "Size: "$SIZE" Target: ≤"$OPTARG""
+				TARGET="$OPTARG" ;;
+			a)
+				VERBOSE=true ;;
 			?)
 				echo -e "$0: invalid option -- '"$OPTARG"'"
 				echo "Try '-h' for more information."
-				exit 22
-				;;
+				exit 22 ;;
 		esac
 	done
 
-if ! [ -x "$PROG" ]
-	then
-		echo -e "'"$PROG"' not found/not executable\n'-h' for more information."
+if ! [ -x "$PROG" ]; then
+		echo -e "$0: could not find/execute '"$PROG"'"
 		exit 2
 fi
 
-RESULT=() # Initialise RESULT as an array
-tput sc
-for i in $(seq 1 "$CHECKS");
-do
-	ARGS=$(shuf -i 0-2147483648 -n "$SIZE" | while read -r line; do echo "$((line * (1 - 2 * (RANDOM % 2))))"; done | tr '\n' ' ') # "random" because seed is fixed
-	if $MEMTEST
-		then
+check_target () {
+	if (( $1 > "$TARGET" )); then
+		OVERSHOOT+=("$1")
+	fi
+	RESULT+=("$1")
+}
+
+main () {
+	RESULT=() # Initialise RESULT as an array
+	OVERSHOOT=()
+	tput sc
+	if $MEMTEST; then
+		echo "(note: valgrind can take a while)"
+	fi
+	for i in $(seq 1 "$CHECKS"); do
+		ARGS=$(shuf -i 0-2147483648 -n "$SIZE" | while read -r line; do echo "$((line * (1 - 2 * (RANDOM % 2))))"; done | tr '\n' ' ') # "random" because seed is fixed
+		if $MEMTEST; then
 			echo -en "$(tput rc; tput el)"
-			echo -en "Processing... $i/$CHECKS (note: valgrind can take a while)"
+			echo -en "Processing... $i/$CHECKS"
 			out=$(valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s ./"$PROG" "$ARGS" 2>&1) # Redirect stderr to stdout
-			if echo "$out" | grep -E "definitely lost|indirectly lost|possibly lost|ERROR SUMMARY: [^0]|Invalid" > /dev/null
-				then
+			if echo "$out" | grep -E "definitely lost|indirectly lost|possibly lost|ERROR SUMMARY: [^0]|Invalid" > /dev/null; then
 					echo -e "\n\e[1;91m$out\e[0m"
 					exit 1
 			fi
 		else
-			echo -en "\r\e[KProcessing... $i/$CHECKS"
+			echo -en "$(tput rc; tput el)"
+			echo -en "Processing... $i/$CHECKS"
 			out=$(./"$PROG" "$ARGS")
-    fi
-	count=$(echo "$out" | grep -vc "==")
-	RESULT+=("$count")
-done
+		fi
+		count=$(echo "$out" | grep -vc "==")
+		check_target "$count"
+	done
+	echo -en "$(tput rc; tput el)"
+}
 
-echo -en "$(tput rc; tput el)"
+TIMEFORMAT=$'CPU: %P%% (%Rs)'; time main
+
+if $VERBOSE && (( TARGET )) && (( "${#OVERSHOOT[@]}" )); then
+	printf "Overshoots:\n"
+	printf "%s\n" "${OVERSHOOT[@]}" | sort | uniq -c | sort -nr | \
+	awk '{printf("\t%d (%d times)\n", $2, $1)}'; printf "Total:\n\t%d/%d overshoots\n" "${#OVERSHOOT[@]}" "${CHECKS}"
+fi
 
 printf "%s\n" "${RESULT[@]}" | sort -n | \
-awk -v size="$SIZE" -v checks="$CHECKS" 'NR==1 {min = $1} END \
-{printf("\\e[1;92mTest complete!\\e[0m\\nSize: %d | Times tested: %d\\nMax: %d | Min: %d", size, checks, $1, min)}' | \
+awk -v size="$SIZE" -v checks="$CHECKS" '{avg += $1} NR==1 {min = $1} END \
+{printf("\\e[1;92mTest complete!\\e[0m\\nSize: %d \\t Tests: %d\\nMax: %d \\t Min: %d \\t Avg: %d", size, checks, $1, min, avg/NR)}' | \
 echo -e "$(cat)"
+
+if (( TARGET )) && (( CHECKS )); then
+	overshoot_percent=$(awk -v overshoot="${#OVERSHOOT[@]}" -v checks="$CHECKS" 'BEGIN {printf("%.3f", (overshoot * 100 / checks))}')
+	if awk 'BEGIN {exit !('$overshoot_percent' <= 1)}'; then
+		colour="\e[1;92m"
+	elif awk 'BEGIN {exit !('$overshoot_percent' <= 5)}'; then
+		colour="\e[1;93m"
+	else
+		colour="\e[1;91m"
+	fi
+	printf "Target: %d\tOvershoots: %d/%d %b(%.3f%%)\e[0m\n" "${TARGET}" "${#OVERSHOOT[@]}" "${CHECKS}" "${colour}" "${overshoot_percent}"
+fi
