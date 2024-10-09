@@ -5,13 +5,10 @@
 CHECKS=250
 SIZE=100
 PROG="push_swap"
-OUTFILE="gen_out.txt"
-> "$OUTFILE" # Reset file
 
-OPTSTR=":s:c:n:t:ohv"
+OPTSTR=":s:c:n:t:ahv"
 MEMTEST=false
-OUTPUT_OVERSHOOT=false
-SUCCESS=true
+VERBOSE=false
 TARGET=0
 
 while getopts "$OPTSTR" opt
@@ -24,16 +21,10 @@ OPTIONS:\n\
 	-c		test count (default: 250)
 	-n		program name (default: \"push_swap\")
 	-t		set target (default: disabled)
-	-o		save overshot values to specified file
+	-a		display numbers that exceed '-t' target
 	-v		valgrind (warning: takes more time!)
-	-d		debug mode
 
-Example: $0 -s 100 -c 500 -t 700
-
-QUICK REF:
-	5:	≤12
-	100:	≤700
-	500:	≤5500"
+Example: ./$0 -s 100 -c 300 -t 700"
 				exit 0 ;;
 			s)
 				if [[ "$OPTARG" =~ ^[-+]?[0-9]+$ ]] && (( "$OPTARG" >= 0 ))
@@ -64,8 +55,8 @@ QUICK REF:
 			t)
 				echo -e "Size: "$SIZE" Target: ≤"$OPTARG""
 				TARGET="$OPTARG" ;;
-			o)
-				OUTPUT_OVERSHOOT=true ;;
+			a)
+				VERBOSE=true ;;
 			?)
 				echo -e "$0: invalid option -- '"$OPTARG"'"
 				echo "Try '-h' for more information."
@@ -80,13 +71,10 @@ fi
 
 check_target () {
 	if (( $1 > "$TARGET" )); then
-		printf "%s\nMoves:%s\n\n" "$2" "$1" >> "$OUTFILE"
 		OVERSHOOT+=("$1")
 	fi
 	RESULT+=("$1")
 }
-
-
 
 main () {
 	RESULT=() # Initialise RESULT as an array
@@ -96,34 +84,29 @@ main () {
 		echo "(note: valgrind can take a while)"
 	fi
 	for i in $(seq 1 "$CHECKS"); do
-		ARGS=$(shuf -i 0-2147483647 -n "$SIZE" | while read -r line; do echo "$((line * (1 - 2 * (RANDOM % 2))))"; done | tr '\n' ' ') # "random" because seed is fixed
+		ARGS=$(shuf -i 0-2147483648 -n "$SIZE" | while read -r line; do echo "$((line * (1 - 2 * (RANDOM % 2))))"; done | tr '\n' ' ') # "random" because seed is fixed
 		if $MEMTEST; then
-			echo -en $(tput rc; tput el)
-			printf "Processing... %d/%d" "$i" "$CHECKS"
+			echo -en "$(tput rc; tput el)"
+			echo -en "Processing... $i/$CHECKS"
 			out=$(valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s ./"$PROG" "$ARGS" 2>&1) # Redirect stderr to stdout
-			if printf "%s" "$out" | grep -E "definitely lost|indirectly lost|possibly lost|ERROR SUMMARY: [^0]|Invalid" > /dev/null; then
-					printf "\n\e[1;91m%s\e[0m" "$out"
+			if echo "$out" | grep -E "definitely lost|indirectly lost|possibly lost|ERROR SUMMARY: [^0]|Invalid" > /dev/null; then
+					echo -e "\n\e[1;91m$out\e[0m"
 					exit 1
 			fi
 		else
-			echo -en $(tput rc; tput el)
-			printf "Processing... %d/%d" "$i" "$CHECKS"
+			echo -en "$(tput rc; tput el)"
+			echo -en "Processing... $i/$CHECKS"
 			out=$(./"$PROG" "$ARGS")
 		fi
-		result=$(printf "%s" "$out" | grep -v "==")
-		if [ "$result" = "Error" ]; then
-			printf "%s\n%s" "$result" "$out"
-			exit 1
-		fi
-		moves=$(printf "%s\n" "$result" | wc -l)
-		check_target "$moves" "$ARGS"
+		count=$(echo "$out" | grep -vc "==")
+		check_target "$count"
 	done
-	echo -en $(tput rc; tput el)
+	echo -en "$(tput rc; tput el)"
 }
 
 TIMEFORMAT=$'CPU: %P%% (%Rs)'; time main
 
-if $OUTPUT_OVERSHOOT && (( TARGET )) && (( "${#OVERSHOOT[@]}" )); then
+if $VERBOSE && (( TARGET )) && (( "${#OVERSHOOT[@]}" )); then
 	printf "Overshoots:\n"
 	printf "%s\n" "${OVERSHOOT[@]}" | sort | uniq -c | sort -nr | \
 	awk '{printf("\t%d (%d times)\n", $2, $1)}'; printf "Total:\n\t%d/%d overshoots\n" "${#OVERSHOOT[@]}" "${CHECKS}"
