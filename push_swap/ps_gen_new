@@ -1,0 +1,147 @@
+#!/bin/bash
+
+#rsiah is not responsible for any damages/loss of life resulting from the use of this script
+
+CHECKS=250
+SIZE=100
+PROG="push_swap"
+OUTFILE="gen_out.txt"
+> "$OUTFILE" # Reset file
+
+OPTSTR=":s:c:n:t:ohv"
+MEMTEST=false
+OUTPUT_OVERSHOOT=false
+SUCCESS=true
+TARGET=0
+
+while getopts "$OPTSTR" opt
+	do
+		case "$opt" in
+			h)
+				echo  -e "Usage: $0 [OPTION]...\nBenchmarking tool for push_swap.\n\n\
+OPTIONS:\n\
+	-s 		numbers to check (default: 100)
+	-c		test count (default: 250)
+	-n		program name (default: \"push_swap\")
+	-t		set target (default: disabled)
+	-o		save overshot values to specified file
+	-v		valgrind (warning: takes more time!)
+	-d		debug mode
+
+Example: $0 -s 100 -c 500 -t 700
+
+QUICK REF:
+	5:	≤12
+	100:	≤700
+	500:	≤5500"
+				exit 0 ;;
+			s)
+				if [[ "$OPTARG" =~ ^[-+]?[0-9]+$ ]] && (( "$OPTARG" >= 0 ))
+					then SIZE="$OPTARG"
+				else
+					printf "%s: invalid option -- '%s'\nTry '-h' for more information.\n" "$0" "$OPTARG"
+					exit 22
+				fi ;;
+			c)
+				if [[ "$OPTARG" =~ ^[-+]?[0-9]+$ ]] && (( "$OPTARG" >= 0 ))
+					then CHECKS="$OPTARG"
+				else
+					echo -e "$0: invalid option -- '"$OPTARG"'"
+					echo "Try '-h' for more information."
+					exit 22
+				fi ;;
+			v)
+				MEMTEST=true ;;
+			n)
+				PROG="$OPTARG"
+				if [ -x $PROG ]
+					then
+						echo "Running '"$PROG"'"
+					else
+						echo "$0: could not find/execute '"$PROG"'"
+						exit 2
+				fi ;;
+			t)
+				echo -e "Size: "$SIZE" Target: ≤"$OPTARG""
+				TARGET="$OPTARG" ;;
+			o)
+				OUTPUT_OVERSHOOT=true ;;
+			?)
+				echo -e "$0: invalid option -- '"$OPTARG"'"
+				echo "Try '-h' for more information."
+				exit 22 ;;
+		esac
+	done
+
+if ! [ -x "$PROG" ]; then
+		echo -e "$0: could not find/execute '"$PROG"'"
+		exit 2
+fi
+
+check_target () {
+	if (( $1 > "$TARGET" )); then
+		printf "%s\nMoves:%s\n\n" "$2" "$1" >> "$OUTFILE"
+		OVERSHOOT+=("$1")
+	fi
+	RESULT+=("$1")
+}
+
+
+
+main () {
+	RESULT=() # Initialise RESULT as an array
+	OVERSHOOT=()
+	tput sc
+	if $MEMTEST; then
+		echo "(note: valgrind can take a while)"
+	fi
+	for i in $(seq 1 "$CHECKS"); do
+		ARGS=$(shuf -i 0-2147483647 -n "$SIZE" | while read -r line; do echo "$((line * (1 - 2 * (RANDOM % 2))))"; done | tr '\n' ' ') # "random" because seed is fixed
+		if $MEMTEST; then
+			echo -en $(tput rc; tput el)
+			printf "Processing... %d/%d" "$i" "$CHECKS"
+			out=$(valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s ./"$PROG" "$ARGS" 2>&1) # Redirect stderr to stdout
+			if printf "%s" "$out" | grep -E "definitely lost|indirectly lost|possibly lost|ERROR SUMMARY: [^0]|Invalid" > /dev/null; then
+					printf "\n\e[1;91m%s\e[0m" "$out"
+					exit 1
+			fi
+		else
+			echo -en $(tput rc; tput el)
+			printf "Processing... %d/%d" "$i" "$CHECKS"
+			out=$(./"$PROG" "$ARGS")
+		fi
+		result=$(printf "%s" "$out" | grep -v "==")
+		if [ "$result" = "Error" ]; then
+			printf "%s\n%s" "$result" "$out"
+			exit 1
+		fi
+		moves=$(printf "%s\n" "$result" | wc -l)
+		check_target "$moves" "$ARGS"
+	done
+	echo -en $(tput rc; tput el)
+}
+
+TIMEFORMAT=$'CPU: %P%% (%Rs)'; time main
+
+if $OUTPUT_OVERSHOOT && (( TARGET )) && (( "${#OVERSHOOT[@]}" )); then
+	printf "Overshoots:\n"
+	printf "%s\n" "${OVERSHOOT[@]}" | sort | uniq -c | sort -nr | \
+	awk '{printf("\t%d (%d times)\n", $2, $1)}'; printf "Total:\n\t%d/%d overshoots\n" "${#OVERSHOOT[@]}" "${CHECKS}"
+fi
+
+printf "%s\n" "${RESULT[@]}" | sort -n | \
+awk -v size="$SIZE" -v checks="$CHECKS" '{avg += $1} NR==1 {min = $1} END \
+{printf("\\e[1;92mTest complete!\\e[0m\\nSize: %d \\t Tests: %d\\nMax: %d \\t Min: %d \\t Avg: %d", size, checks, $1, min, avg/NR)}' | \
+echo -e "$(cat)"
+
+if (( TARGET )) && (( CHECKS )); then
+	overshoot_percent=$(awk -v overshoot="${#OVERSHOOT[@]}" -v checks="$CHECKS" 'BEGIN {printf("%.3f", (overshoot * 100 / checks))}')
+	if awk 'BEGIN {exit !('$overshoot_percent' <= 1)}'; then
+		colour="\e[1;92m"
+	elif awk 'BEGIN {exit !('$overshoot_percent' <= 5)}'; then
+		colour="\e[1;93m"
+	else
+		colour="\e[1;91m"
+	fi
+	printf "Target: %d\tOvershoots: %d/%d %b(%.3f%%)\e[0m\n" "${TARGET}" "${#OVERSHOOT[@]}" "${CHECKS}" "${colour}" "${overshoot_percent}"
+fi
