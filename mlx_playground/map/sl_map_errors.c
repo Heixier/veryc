@@ -8,7 +8,7 @@ void	map_print_errors(t_merr *errors)
 	{	
 		ft_printfd(2, "%d errors found!\n", errors -> errors);
 		if (errors -> shape)
-			ft_printfd(2, "map not rectangular!\n");
+			ft_printfd(2, "invalid shape!\n");
 		if (errors -> left_wall)
 			ft_printfd(2, "left wall broken!\n");
 		if (errors -> right_wall)
@@ -60,9 +60,9 @@ void	print_errors(t_merr *errors)
 	ft_printfd(1, "exits: %d\n", errors -> exits);
 	ft_printfd(1, "players: %d\n", errors -> players);
 	ft_printfd(1, "path: %d\n", errors -> path);
-
 }
 
+/** Create error struct and checks for errors */
 t_merr	*set_errors(t_map *map)
 {
 	t_merr	*errors;
@@ -73,7 +73,7 @@ t_merr	*set_errors(t_map *map)
 	print_errors(errors);
 	if (!map)
 		return (NULL);
-	// map_check_shape(map, errors);
+	map_check_shape(map, errors);
 	// map_check_walls(map, errors);
 	// map_check_items(map, errors);
 	//map_check_path

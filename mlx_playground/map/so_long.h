@@ -41,7 +41,7 @@ typedef	struct	s_merr
 }				t_merr;
 
 //cleanup
-void		free_map(t_map *map);
+void	free_map(t_map *map);
 
 //utils
 int		sl_count_arr(char **array);
@@ -68,7 +68,7 @@ t_merr	*set_errors(t_map *map);
 int		validate_map(t_map *map);
 
 //validate_map
-
+void	map_check_shape(t_map *map, t_merr *errors);
 
 //validate_path
 

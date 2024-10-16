@@ -18,7 +18,7 @@ void	print_array(char **array, char *msg)
 
 void	print_map(t_map *map)
 {
-	ft_printfd(1, "Mapstr [%d]: \t\n%s\n\n", map -> size, map -> mapstr);
+	ft_printfd(1, "Mapstr [%d]: \t\n%s\n", map -> size, map -> mapstr);
 	print_array(map -> data, "Array: \n");
 	printf("Width: %d\nHeight: %d\nCollectibles: %d\nExits: %d\nPlayers: %d\n", \
 	map -> width, map -> height, map -> tokens, map -> exits, map -> players);
