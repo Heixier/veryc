@@ -2,7 +2,7 @@ COMPILER = cc
 CFLAGS = -Wall -Wextra -Werror -MMD
 NAME = a.out #temp name
 
-SRCS = so_long.c sl_floodfill.c sl_validate_map.c sl_cleanup.c sl_read.c sl_info.c sl_utils.c sl_map_errors.c
+SRCS = so_long.c sl_path.c sl_validate_map.c sl_cleanup.c sl_read.c sl_info.c sl_utils.c sl_map_errors.c
 
 OBJS = $(SRCS:.c=.o)
 DEPS = $(OBJS:.o=.d)

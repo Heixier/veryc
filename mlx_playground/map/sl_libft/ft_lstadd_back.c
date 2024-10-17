@@ -18,9 +18,9 @@
  * @param lst 
  * @param new 
  */
-void	ft_lstadd_back(t_list **lst, t_list *new)
+void	ft_lstadd_back(t_node **lst, t_node *new)
 {
-	t_list	*list_traverser;
+	t_node	*list_traverser;
 
 	if (!lst || !new)
 		return ;

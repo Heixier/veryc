@@ -16,9 +16,9 @@
  * @brief Returns the last node of the list
  * 
  * @param lst 
- * @return t_list* 
+ * @return t_node* 
  */
-t_list	*ft_lstlast(t_list *lst)
+t_node	*ft_lstlast(t_node *lst)
 {
 	if (lst)
 		while (lst -> next)

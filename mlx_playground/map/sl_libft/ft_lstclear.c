@@ -19,10 +19,10 @@
  * @param lst 
  * @param del 
  */
-void	ft_lstclear(t_list **lst, void (*del)(void *))
+void	ft_lstclear(t_node **lst, void (*del)(void *))
 {
-	t_list	*traverser;
-	t_list	*list_holder;
+	t_node	*traverser;
+	t_node	*list_holder;
 
 	traverser = *lst;
 	if (lst)

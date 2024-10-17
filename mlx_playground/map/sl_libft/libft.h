@@ -18,11 +18,18 @@
 # include <ctype.h>
 # include <unistd.h>
 
-typedef struct s_list
+typedef struct s_node
 {
 	void			*content;
 	struct s_list	*next;
-}					t_list;
+}					t_node;
+
+typedef	struct s_list
+{
+	t_node	head;
+	size_t	len;
+}				t_list;
+
 
 int		ft_isalpha(int c);
 int		ft_isdigit(int c);
@@ -65,24 +72,24 @@ void	ft_putendl_fd(char *s, int fd);
 void	ft_putnbr_fd(int n, int fd);
 
 // Bonuses
-t_list	*ft_lstnew(void *content);
-void	ft_lstadd_back(t_list **lst, t_list *new);
-void	ft_lstadd_front(t_list **lst, t_list *new);
-void	ft_lstdelone(t_list *lst, void (*del)(void *));
-t_list	*ft_lstlast(t_list *lst);
-int		ft_lstsize(t_list *lst);
-void	ft_lstclear(t_list **lst, void (*del)(void *));
-void	ft_lstiter(t_list *lst, void (*f)(void *));
-t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
+t_node	*ft_lstnew(void *content);
+void	ft_lstadd_back(t_node **lst, t_node *new);
+void	ft_lstadd_front(t_node **lst, t_node *new);
+void	ft_lstdelone(t_node *lst, void (*del)(void *));
+t_node	*ft_lstlast(t_node *lst);
+int		ft_lstsize(t_node *lst);
+void	ft_lstclear(t_node **lst, void (*del)(void *));
+void	ft_lstiter(t_node *lst, void (*f)(void *));
+t_node	*ft_lstmap(t_node *lst, void *(*f)(void *), void (*del)(void *));
 
 // Printf 
-int	ft_printfd(int fd, const char *str, ...);
-int	pf_putchar(unsigned char c, int fd);
-int	pf_putstring(char *str, int fd);
-int	pf_putaddr(void *ptr, int fd);
-int	pf_putnbr(int n, int fd);
-int	pf_putnbr_u(unsigned int n, int fd);
-int	pf_puthex(unsigned int hexa, int upper, int fd);
+int		ft_printfd(int fd, const char *str, ...);
+int		pf_putchar(unsigned char c, int fd);
+int		pf_putstring(char *str, int fd);
+int		pf_putaddr(void *ptr, int fd);
+int		pf_putnbr(int n, int fd);
+int		pf_putnbr_u(unsigned int n, int fd);
+int		pf_puthex(unsigned int hexa, int upper, int fd);
 
 int		rz_strxcmp(const char *s1, const char *s2, size_t x);
 

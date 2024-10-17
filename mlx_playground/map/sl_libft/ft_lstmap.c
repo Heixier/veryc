@@ -19,7 +19,7 @@
  * @param lst 
  * @param del 
  */
-void	del_content(void *content, t_list **lst, void (*del)(void *))
+void	del_content(void *content, t_node **lst, void (*del)(void *))
 {
 	free(content);
 	ft_lstclear(lst, del);
@@ -35,13 +35,13 @@ delete the content of a node if needed
  * @param lst 
  * @param f 
  * @param del 
- * @return t_list* 
+ * @return t_node* 
  */
-t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *))
+t_node	*ft_lstmap(t_node *lst, void *(*f)(void *), void (*del)(void *))
 {
-	t_list	*input_traverser;
-	t_list	*output;
-	t_list	*output_traverser;
+	t_node	*input_traverser;
+	t_node	*output;
+	t_node	*output_traverser;
 	void	*content_holder;
 
 	if (!f || !del || !lst)

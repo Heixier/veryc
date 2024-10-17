@@ -18,10 +18,10 @@
  * @param lst 
  * @return int 
  */
-int	ft_lstsize(t_list *lst)
+int	ft_lstsize(t_node *lst)
 {
 	size_t	count;
-	t_list	*traverse;
+	t_node	*traverse;
 
 	count = 0;
 	if (lst)

@@ -18,13 +18,13 @@
  * The variable NEXT is initialised to NULL; (uses malloc)
  * 
  * @param content 
- * @return t_list* 
+ * @return t_node* 
  */
-t_list	*ft_lstnew(void *content)
+t_node	*ft_lstnew(void *content)
 {
-	t_list	*output;
+	t_node	*output;
 
-	output = malloc(sizeof(t_list));
+	output = malloc(sizeof(t_node));
 	if (output)
 	{
 		output -> next = NULL;

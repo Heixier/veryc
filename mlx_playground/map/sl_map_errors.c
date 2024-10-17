@@ -10,13 +10,13 @@ void	map_print_errors(t_merr *errors)
 		if (errors -> shape)
 			ft_printfd(2, "invalid shape!\n");
 		if (errors -> left_wall)
-			ft_printfd(2, "left wall broken!\n");
+			ft_printfd(2, "%d breaks in left wall!\n", errors -> left_wall);
 		if (errors -> right_wall)
-			ft_printfd(2, "right wall broken!\n");
+			ft_printfd(2, "^%d breaks in right wall!\n", errors -> right_wall);
 		if (errors -> top_wall)
-			ft_printfd(2, "top wall broken!\n");
+			ft_printfd(2, "%d breaks in top wall!\n", errors -> top_wall);
 		if (errors -> bottom_wall)
-			ft_printfd(2, "bottom wall broken!\n");
+			ft_printfd(2, "%d breaks in bottom wall!\n", errors -> bottom_wall);
 		if (errors -> tokens)
 			ft_printfd(2, "invalid collectibles: %d\n", errors -> tokens);
 		if (errors -> exits)
@@ -74,8 +74,8 @@ t_merr	*set_errors(t_map *map)
 	if (!map)
 		return (NULL);
 	map_check_shape(map, errors);
-	// map_check_walls(map, errors);
-	// map_check_items(map, errors);
+	map_check_walls(map, errors);
+	map_check_items(map, errors);
 	//map_check_path
 	return (errors);
 }

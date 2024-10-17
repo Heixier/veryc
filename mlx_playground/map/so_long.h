@@ -8,6 +8,8 @@
 #include <string.h>
 #include "libft.h"
 
+#define MIN_TOKENS 2
+
 #define WALL '1'
 #define EMPTY '0'
 #define TOKEN 'C'
@@ -69,7 +71,9 @@ int		validate_map(t_map *map);
 
 //validate_map
 void	map_check_shape(t_map *map, t_merr *errors);
-
+void	map_check_walls(t_map *map, t_merr *errors);
+void	map_check_items(t_map *map, t_merr *errors);
 //validate_path
+void	map_check_path(t_map *map, t_merr *errors);
 
 #endif
