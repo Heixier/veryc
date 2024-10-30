@@ -13,7 +13,7 @@ OBJECTS = $(SRCS:.c=.o)
 all : $(NAME)
 
 $(NAME): $(OBJECTS) $(MLX_LIB)
-	$(COMPILER) $(CFLAGS) -lm $(MLX_FLAGS) $(MLX_LIB) $^ -o $@
+	$(COMPILER) $(CFLAGS) $^ -lm $(MLX_FLAGS) -o $@
 
 %.o: %.c
 	@$(COMPILER) -c $(CFLAGS) $< -o $@

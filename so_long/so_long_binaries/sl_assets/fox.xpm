@@ -1,7 +1,7 @@
 /* XPM */
 static char * fox_xpm[] = {
 "16 16 9 1",
-" 	c None",
+" 	c #FF0000",
 ".	c #1D1D1C",
 "+	c #D8CEEB",
 "@	c #C4C4C5",

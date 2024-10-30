@@ -1,7 +1,7 @@
 /* XPM */
 static char * frog_xpm[] = {
 "16 16 12 1",
-" 	c None",
+" 	c #FF0000",
 ".	c #28192F",
 "+	c #A4FFA6",
 "@	c #FEA464",
