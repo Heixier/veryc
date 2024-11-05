@@ -123,12 +123,13 @@ init_target () {
 
 check_error () {
 	local ERROR=false
-	local errmsg
+	local errmsg 
+	local checker_output=$(printf "%s\n" "$2" | ./"$CHECKER" "$1" 2>&1)
 
 	if [ "$2" = "Error" ]; then
 		errmsg="Program reported an error."
 		ERROR=true
-	elif [ "$(printf "%s\n" "$2" | ./"$CHECKER" "$1")" == "KO" ]; then
+	elif [ "$checker_output" == "KO" ]; then
 		errmsg="Sort KO."
 		ERROR=true
 	else
@@ -136,7 +137,7 @@ check_error () {
 	fi
 	if $ERROR; then
 		printf "\n\e[1;91m%s\e[0m\nSaving last result to %s and exiting.\n" "$errmsg" "$OUTFILE"
-		printf "%s\n\nARGS: %s\nRESULT: %s" "$errmsg" "$1" "$2" >> gen_out.txt
+		printf "%s\n\nARGS: %s\nRESULT: %s\n" "$errmsg" "$1" "$2" >> "$OUTFILE"
 		exit 1
 	fi
 }
@@ -155,7 +156,7 @@ main () {
 		if $MEMTEST; then
 			printf "%s" "$(tput rc)$(tput el)"
 			printf "Processing... %d/%d" "$i" "$TESTS"
-			out=$(valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s ./"$PROG" "$ARGS" 2>&1)
+			out=$(valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s ./"$PROG" $ARGS 2>&1)
 			if printf "%s" "$out" | grep -E "definitely lost|indirectly lost|possibly lost|ERROR SUMMARY: [^0]|Invalid" > /dev/null; then
 					printf "\n\e[1;91m%s\e[0m" "$out"
 					exit 1
@@ -163,7 +164,7 @@ main () {
 		else
 			printf "%s" "$(tput rc)$(tput el)"
 			printf "Processing... %d/%d" "$i" "$TESTS"
-			out=$(./"$PROG" "$ARGS")
+			out=$(./"$PROG" $ARGS)
 		fi
 		result=$(printf "%s" "$out" | grep -v "==")
 		check_error "$ARGS" "$result"
