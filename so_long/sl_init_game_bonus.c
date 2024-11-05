@@ -23,7 +23,10 @@ int	sl_init_win(t_game *game, t_map *map)
 	x = (map -> width * IMG_SIZE) + PADDING;
 	y = map -> height * IMG_SIZE + PADDING;
 	if (x > screen_x || y > screen_y - (game -> tile_size * 4))
-		return (ft_printfd(2, "Error\nwindow size exceeds display\n"), 0);
+		return (ft_printfd(2, "Error\nwindow size exceeds display\n\
+Available screen resolution: %dx%d\n\
+Requested screen resolution: %dx%d\n", screen_x, \
+screen_y - game -> tile_size * 4, x, y), 0);
 	game -> tile_size = IMG_SIZE;
 	game -> win = mlx_new_window(game -> mlx, x, y, WIN_TITLE);
 	if (!game -> win)
