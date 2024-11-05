@@ -24,7 +24,7 @@ void	*ft_calloc(size_t nmemb, size_t size)
 		return (NULL);
 	output = malloc(n);
 	if (!output)
-		return (ft_printfd(2, "malloc error\n"), output);
+		return (ft_printfd(2, "Error\nmalloc error\n"), output);
 	return (ft_bzero(output, n), output);
 }
 

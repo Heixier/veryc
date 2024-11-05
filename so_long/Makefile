@@ -52,7 +52,9 @@ $(BONUS_NAME): $(BONUS_OBJS) $(LIBFT_LIB) $(MLX_LIB)
 clean:
 	rm -rf $(OBJS) $(BONUS_OBJS) $(DEPS) $(BONUS_DEPS) $(LIBFT_LIB) $(MLX_LIB)
 	@make --no-print-directory -C $(LIBFT_DIR) clean
-	@make --no-print-directory -C $(MLX_DIR) clean
+	@if [ -d "$(MLX_DIR)" ]; then \
+		make --no-print-directory -C $(MLX_DIR) clean; \
+	fi
 
 fclean: clean
 	rm -rf $(NAME) $(BONUS_NAME) $(MLX_DIR)

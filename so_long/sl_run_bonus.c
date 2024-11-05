@@ -88,7 +88,7 @@ int	run_game(t_game *game)
 			ft_printfd(1, "\e[38;5;82;1mVictory! You saved the princess \
 and all her foxes!\n");
 		else
-			ft_printfd(1, "\e[38;5;15mGood job! You saved the princess \
+			ft_printfd(1, "\e[38;5;153;1Good job! You saved the princess \
 and %d fox(es).\n", \
 			game -> map -> tokens - game -> player -> tokens);
 	}

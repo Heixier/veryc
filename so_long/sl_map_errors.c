@@ -16,7 +16,7 @@ void	map_print_errors(t_merr *errors, t_map *map)
 {
 	if (errors -> errors)
 	{
-		ft_printfd(2, "%d errors found!\n", errors -> errors);
+		ft_printfd(2, "Error\n%d errors found!\n", errors -> errors);
 		if (errors -> shape)
 			ft_printfd(2, "invalid shape!\n");
 		if (errors -> characters)
@@ -84,8 +84,9 @@ int	validate_map(t_map *map)
 
 	errors = set_errors(map);
 	if (!errors)
-		return (ft_printfd(2, "Failed to create t_error\n"), 0);
+		return (ft_printfd(2, "Error\nFailed to create t_error\n"), 0);
 	if (map_tally_errors(errors, map) > 0 || !map_check_path(map))
-		return (ft_printfd(2, "Failed to validate map!\n"), free(errors), 0);
+		return (ft_printfd(2, "Error\nFailed to validate map!\n"), \
+		free(errors), 0);
 	return (free(errors), 1);
 }

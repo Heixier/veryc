@@ -53,7 +53,7 @@ void	print_queue(t_queue *queue)
 	i = 1;
 	if (!queue)
 	{
-		ft_printfd(1, "Where is your queue?\n");
+		ft_printfd(2, "Where is your queue?\n");
 		return ;
 	}
 	traverse = queue -> head;

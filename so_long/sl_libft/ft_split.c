@@ -96,7 +96,7 @@ char	**ft_split(char const *s, char *seps)
 	i = 0;
 	output = malloc((words + 1) * sizeof(char *));
 	if (!output)
-		return (ft_printfd(2, "malloc error\n"), NULL);
+		return (ft_printfd(2, "Error\nmalloc error\n"), NULL);
 	while (i < words)
 	{
 		while (find_char(*s, seps))

@@ -28,7 +28,7 @@ void	map_check_shape(t_map *map, t_merr *errors)
 	}
 	if (!check_no_empty_line(map -> mapstr))
 	{
-		ft_printfd(2, "Empty line!\n");
+		ft_printfd(2, "Error\nEmpty line!\n");
 		errors -> shape = 1;
 	}
 }

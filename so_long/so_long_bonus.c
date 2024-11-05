@@ -18,7 +18,7 @@ int	main(int argc, char **argv)
 	t_game	*game;
 
 	if (argc != 2)
-		return (1);
+		return (ft_printfd(2, "Error\ninvalid argument count\n"), 1);
 	map = init_map(argv[1]);
 	if (!map)
 		return (1);

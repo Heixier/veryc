@@ -86,9 +86,10 @@ int	sl_count_tokens(t_map *map, t_queue *queue)
 		traverse = traverse -> next;
 	}
 	if (exits != map -> exits)
-		return (ft_printfd(2, "No valid path to exit!\n"), 0);
+		return (ft_printfd(2, "Error\nNo valid path to exit!\n"), 0);
 	if (toks != map -> tokens)
-		return (ft_printfd(2, "%d tokens unreachable\n", map->tokens - toks), 0);
+		return (ft_printfd(2, "Error\n%d tokens unreachable\n", \
+map->tokens - toks), 0);
 	return (1);
 }
 
@@ -99,7 +100,7 @@ int	map_check_path(t_map *map)
 
 	queue = init_queue();
 	if (!queue)
-		return (ft_printfd(2, "Malloc fail\n"), 0);
+		return (ft_printfd(2, "Error\nMalloc fail\n"), 0);
 	set_player_coords(map);
 	queue -> head = lst_new_coord(map -> player_x, map -> player_y);
 	if (!queue -> head)

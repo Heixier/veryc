@@ -16,13 +16,18 @@ int	sl_init_win(t_game *game, t_map *map)
 {
 	int	x;
 	int	y;
+	int	screen_x;
+	int	screen_y;
 
+	mlx_get_screen_size(game -> mlx, &screen_x, &screen_y);
 	x = (map -> width * IMG_SIZE) + PADDING;
 	y = map -> height * IMG_SIZE + PADDING;
+	if (x > screen_x || y > screen_y - (game -> tile_size * 4))
+		return (ft_printfd(2, "Error\nwindow size exceeds display\n"), 0);
 	game -> tile_size = IMG_SIZE;
 	game -> win = mlx_new_window(game -> mlx, x, y, WIN_TITLE);
 	if (!game -> win)
-		return (ft_printfd(1, "failed to create window\n"), 0);
+		return (ft_printfd(2, "Error\nfailed to create window\n"), 0);
 	return (1);
 }
 
@@ -79,10 +84,12 @@ void	*init_game(t_map *map)
 	game -> moves = 0;
 	game -> victory = 0;
 	if (!init_images(game))
-		return (ft_printfd(1, "failed to load images\n"), free_game(game), NULL);
+		return (ft_printfd(2, "Error\nfailed to load images\n"), \
+		free_game(game), NULL);
 	if (!game -> mlx)
-		return (ft_printfd(1, "failed to init mlx\n"), free_game(game), NULL);
+		return (ft_printfd(2, "Error\nfailed to init mlx\n"), \
+		free_game(game), NULL);
 	if (!sl_init_win(game, map))
-		return (ft_printfd(1, "win fail\n"), free_game(game), NULL);
+		return (ft_printfd(2, "Error\nwin fail\n"), free_game(game), NULL);
 	return (game);
 }

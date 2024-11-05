@@ -19,7 +19,7 @@ t_coord	*lst_new_coord(int x, int y)
 
 	coord = malloc(sizeof(t_coord));
 	if (!coord)
-		return (ft_printfd(2, "Malloc failed\n"), NULL);
+		return (ft_printfd(2, "Error\nMalloc failed\n"), NULL);
 	coord -> x = x;
 	coord -> y = y;
 	coord -> next = NULL;
