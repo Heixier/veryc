@@ -25,7 +25,7 @@ void	victory_handler(t_game *game)
 	if ((game -> player -> tokens == game -> map -> tokens) && \
 	game -> player -> on_exit)
 	{
-		ft_printfd(1, "\e[38;5;196;1mDefeat! The princess \
+		ft_printfd(1, "\e[38;5;196;1mYou lose! The princess \
 and all her cute foxes died!\n");
 		mlx_loop_end(game -> mlx);
 		game -> victory = 1;
@@ -68,6 +68,8 @@ void	render_tile(t_game *game, int x, int y)
 int	run_game(t_game *game)
 {
 	ft_printfd(1, "\e[?25l");
+	ft_printfd(1, "\e[38;5;207;1mWelcome to the Princess's Castle 🏰!\n\
+\e[38;5;208;1mShe has %d cute 🦊 fox(es)!\e[0m\n", game -> map -> tokens);
 	mlx_hook(game -> win, 17, 0L, mlx_loop_end, game -> mlx);
 	mlx_key_hook(game -> win, key_handler, game);
 	mlx_loop_hook(game -> mlx, loop_handler, game);
@@ -78,10 +80,11 @@ int	run_game(t_game *game)
 			ft_printfd(1, "\e[38;5;82;1mVictory! You saved the princess \
 and all her foxes!\n");
 		else
-			ft_printfd(1, "\e[38;5;170;1mGood job! You saved the princess \
+			ft_printfd(1, "\e[38;5;153;1mGood job! You saved the princess \
 and %d fox(es).\n", \
 			game -> map -> tokens - game -> player -> tokens);
 	}
-	ft_printfd(1, "\e[?25h\e[0m\a");
+	ft_printfd(1, "\e[38;5;244m\rGame finished in %d moves\e[?25h\e[0m\a\n", \
+	game -> moves);
 	return (0);
 }

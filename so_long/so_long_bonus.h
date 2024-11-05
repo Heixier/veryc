@@ -45,7 +45,7 @@
 # define TILE_PATH "./sl_assets/tile.xpm"
 # define PLAYER_PATH "./sl_assets/scythe.xpm"
 # define TOKEN_PATH "./sl_assets/fox.xpm"
-# define EXIT_CLOSED "./sl_assets/demon.xpm"
+# define EXIT_CLOSED "./sl_assets/frog.xpm"
 # define EXIT_OPEN "./sl_assets/damsel.xpm"
 # define ENEMY_PATH "./sl_assets/enemy.xpm"
 
