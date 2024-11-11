@@ -41,10 +41,10 @@ $(MLX_LIB): $(MLX_DIR)
 	make --no-print-directory -C $(MLX_DIR)
 
 $(NAME): $(OBJS) $(LIBFT_LIB) $(MLX_LIB)
-	$(COMPILER) $(CFLAGS) -lm $(MLX_FLAGS) $(MLX_LIB) $^ -o $@
+	$(COMPILER) $(CFLAGS) $^ -lm $(MLX_FLAGS) -o $@
 
 $(BONUS_NAME): $(BONUS_OBJS) $(LIBFT_LIB) $(MLX_LIB)
-	$(COMPILER) $(CFLAGS) -lm $(MLX_FLAGS) $(MLX_LIB) $^ -o $@
+	$(COMPILER) $(CFLAGS) $^ -lm $(MLX_FLAGS) -o $@
 
 %.o: %.c
 	@$(COMPILER) -c $(CFLAGS) $< -o $@
