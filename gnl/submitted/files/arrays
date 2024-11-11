@@ -1,0 +1,50 @@
+The basics
+
+The first thing we'll do is define an array containing the values of the --threads parameter that we want to test:
+
+allThreads=(1 2 4 8 16 32 64 128)
+
+In this example, all the elements are numbers, but it need not be the case—arrays in Bash can contain both numbers and strings, e.g., myArray=(1 2 "three" 4 "five") is a valid expression. And just as with any other Bash variable, make sure to leave no spaces around the equal sign. Otherwise, Bash will treat the variable name as a program to execute, and the = as its first parameter!
+
+Now that we've initialized the array, let's retrieve a few of its elements. You'll notice that simply doing echo $allThreads will output only the first element.
+
+To understand why that is, let's take a step back and revisit how we usually output variables in Bash. Consider the following scenario:
+
+type="article"
+echo "Found 42 $type"
+
+Say the variable $type is given to us as a singular noun and we want to add an s at the end of our sentence. We can't simply add an s to $type since that would turn it into a different variable, $types. And although we could utilize code contortions such as echo "Found 42 "$type"s", the best way to solve this problem is to use curly braces: echo "Found 42 ${type}s", which allows us to tell Bash where the name of a variable starts and ends (interestingly, this is the same syntax used in JavaScript/ES6 to inject variables and expressions in template literals).
+
+So as it turns out, although Bash variables don't generally require curly brackets, they are required for arrays. In turn, this allows us to specify the index to access, e.g., echo ${allThreads[1]} returns the second element of the array. Not including brackets, e.g.,echo $allThreads[1], leads Bash to treat [1] as a string and output it as such.
+
+Yes, Bash arrays have odd syntax, but at least they are zero-indexed, unlike some other languages (I'm looking at you, R).
+Looping through arrays
+
+Although in the examples above we used integer indices in our arrays, let's consider two occasions when that won't be the case: First, if we wanted the $i-th element of the array, where $i is a variable containing the index of interest, we can retrieve that element using: echo ${allThreads[$i]}. Second, to output all the elements of an array, we replace the numeric index with the @ symbol (you can think of @ as standing for all): echo ${allThreads[@]}.
+Looping through array elements
+
+With that in mind, let's loop through $allThreads and launch the pipeline for each value of --threads:
+
+for t in ${allThreads[@]}; do
+./pipeline --threads $t
+done
+
+Looping through array indices
+
+Next, let's consider a slightly different approach. Rather than looping over array elements, we can loop over array indices:
+
+for i in ${!allThreads[@]}; do
+  ./pipeline --threads ${allThreads[$i]}
+done
+
+Let's break that down: As we saw above, ${allThreads[@]} represents all the elements in our array. Adding an exclamation mark to make it ${!allThreads[@]} will return the list of all array indices (in our case 0 to 7). In other words, the for loop is looping through all indices $i and reading the $i-th element from $allThreads to set the value of the --threads parameter.
+
+This is much harsher on the eyes, so you may be wondering why I bother introducing it in the first place. That's because there are times where you need to know both the index and the value within a loop, e.g., if you want to ignore the first element of an array, using indices saves you from creating an additional variable that you then increment inside the loop.
+Populating arrays
+
+So far, we've been able to launch the pipeline for each --threads of interest. Now, let's assume the output to our pipeline is the runtime in seconds. We would like to capture that output at each iteration and save it in another array so we can do various manipulations with it at the end.
+Some useful syntax
+
+But before diving into the code, we need to introduce some more syntax. First, we need to be able to retrieve the output of a Bash command. To do so, use the following syntax: output=$( ./my_script.sh ), which will store the output of our commands into the variable $output.
+
+The second bit of syntax we need is how to append the value we just retrieved to an array. The syntax to do that will look familiar:
