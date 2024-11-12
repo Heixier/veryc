@@ -11,23 +11,34 @@ check_prog () {
 		prog=$2 # if valgrind is the first argument then the second one is our program name
 	fi
 	if ! [[ -x $prog ]]; then
-		printf "Cannot find/execute \e[38;5;160m\""$prog"\"\e[0m!\n\
-Usage \e[38;5;207m[optional]\e[0m: \e[38;5;105m./multirunner.sh \
+		printf "Cannot find/execute \""$prog"\"!\n\
+Usage: \e[38;5;105m./multirunner.sh \
 \e[38;5;207mvalgrind \
-\e[38;5;82mprogram_name \
-\e[38;5;226mfile1 file2 file3 ...\e[0m\n\n\
+\e[38;5;82mprogram \
+\e[0mfile1 file2 file3 ...\n\
+		       (optional)\n\
 Examples:
-\e[38;5;105m./multirunner.sh \e[38;5;82mso_long\e[38;5;226m maps/*\n\
-\e[38;5;105m./multirunner.sh \e[38;5;207mvalgrind \e[38;5;82mget_next_line\e[38;5;226m texts/*\e[0m\n"
+\e[38;5;105m./multirunner.sh \e[38;5;82mso_long\e[0m maps/*\n\
+\e[38;5;105m./multirunner.sh \e[38;5;207mvalgrind \e[38;5;82mget_next_line\e[0m texts/*\e[0m\n"
 		exit 2
 	fi
+}
+
+print_arr () {
+	local count=1
+	printf "\e[38;5;118;1mReceived:\e[0m\n"
+	for arg in "$@"; do
+		printf "$count: $arg\n"
+		count=$((count+1))
+	done
 }
 
 runner () {
 	local count=0
 	shift $((1 + $memcheck))
+	print_arr "$@"
 	for arg in "$@"; do
-		printf "\e[38;5;118;1m%s\n\e[38;5;141;1mRunning: "$prog" "$arg"\n\e[38;5;226;1m%s\e[0m\n" "$sep" "$sep"
+		printf "\e[38;5;118;1m%s\n\e[38;5;14mRunning: "$prog" "$arg"\n\e[38;5;226;1m%s\e[0m\n" "$sep" "$sep"
 		if [[ $memcheck == 1 ]]; then
 			printf "\e[38;5;207mvalgrind flags: %s\e[0m\n" "${valflags[*]}"
 			valgrind "${valflags[@]}" ./"$prog" "$arg"
