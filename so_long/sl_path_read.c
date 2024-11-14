@@ -72,7 +72,7 @@ int	coord_in_checked(t_queue *checked, int x, int y)
 
 int	coord_check_valid(t_queue *queue, t_map *map, int x, int y)
 {
-	if ((x >= map -> width) | (y >= map -> height))
+	if (x >= map -> width | y >= map -> height)
 		return (0);
 	if (map -> data[y][x] == WALL)
 		return (0);
