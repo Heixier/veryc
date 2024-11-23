@@ -26,7 +26,7 @@ typedef struct s_node
 
 typedef struct s_list
 {
-	t_node	head;
+	t_node	*head;
 	size_t	len;
 }				t_list;
 
