@@ -1,3 +1,4 @@
 [submodule "bash-scripts"]
 	path = bash-scripts
 	url = https://github.com/Heixier/bash-scripts.git
+	branch = main
