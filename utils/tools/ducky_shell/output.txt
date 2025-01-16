@@ -1,0 +1,68 @@
+LOCALE US
+DELAY 1000
+STRING asdf
+ENTER
+DELAY 500
+STRING echo status: $?
+ENTER
+DELAY 250
+STRING test
+ENTER
+DELAY 500
+STRING echo status: $?
+ENTER
+DELAY 250
+STRING invalid
+ENTER
+DELAY 500
+STRING echo status: $?
+ENTER
+DELAY 250
+STRING echo
+ENTER
+DELAY 500
+STRING echo status: $?
+ENTER
+DELAY 250
+STRING echo -n
+ENTER
+DELAY 500
+STRING echo status: $?
+ENTER
+DELAY 250
+STRING echo hello world
+ENTER
+DELAY 500
+STRING echo status: $?
+ENTER
+DELAY 250
+STRING echo $invalid
+ENTER
+DELAY 500
+STRING echo status: $?
+ENTER
+DELAY 250
+STRING echo $0 '$0'
+ENTER
+DELAY 500
+STRING echo status: $?
+ENTER
+DELAY 250
+STRING echo $HOME "$HOME" '$HOME' '"$HOME"' "'$HOME'"
+ENTER
+DELAY 500
+STRING echo status: $?
+ENTER
+DELAY 250
+STRING echo "''''"
+ENTER
+DELAY 500
+STRING echo status: $?
+ENTER
+DELAY 250
+STRING echo '""""'
+ENTER
+DELAY 500
+STRING echo status: $?
+ENTER
+DELAY 250
