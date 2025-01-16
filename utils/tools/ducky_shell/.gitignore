@@ -1,0 +1,5 @@
+*.d
+*.out
+*.o
+*.a
+ducky_shell
