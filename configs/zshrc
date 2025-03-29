@@ -2,7 +2,7 @@ export USER=rsiah
 export MAIL=rsiah@student.42singapore.sg
 
 unsetopt BEEP
-export LESS="-Q"
+export LESS="-QR"
 
 source ~/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 source ~/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
@@ -16,30 +16,33 @@ setopt HIST_EXPIRE_DUPS_FIRST
 setopt EXTENDED_HISTORY
 
 eval "$(dircolors ~/plugins/themes/bliss.dircolors)"
+PATH=$PATH:"/home/rsiah/.local/bin:/home/rsiah/custom/bin"
+export m4="/home/rsiah/custom/bin/m4"
 
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 
 force_color_prompt=yes
 PROMPT='%F{105}%n%f %F{135}%~%f%F{69}>%f '
 
+alias lock="dm-tool switch-to-greeter"
 alias ls="ls --color=auto"
 alias diff="diff --color"
+alias mute="pactl set-sink-mute 0 1"
+alias unmute="pactl set-sink-mute 0 0"
 
 alias ..="cd .."
 alias ...="cd ../.."
-alias 3..="cd ../../.."
+alias ....="cd ../../.."
+alias cd=z
 
 alias gc="gcc -Wall -Wextra -Werror"
 alias ggc="gcc -g -Wall -Wextra -Werror"
 
-alias norm="norminette -R CheckForbiddenSourceHeader"
-alias normdef="norminette -R CheckDefine"
-alias mini='~/mini-moulinette/mini-moul.sh'
+alias norm="norminette"
 alias ldb="gcc -Wall -Wextra -Werror -g -o debug"
 alias debug="lldb ./debug"
 alias crun="gcc -Wall -Wextra -Werror *.c ; ./a.out"
 alias run="./a.out"
-alias francinette=/home/rsiah/francinette/tester.sh
 function vrun() {
 	out=$(valgrind --track-origins=yes --track-fds=yes --leak-check=full --show-leak-kinds=all -s ./a.out $@ 2>&1)
  	if printf "%s\n" "$out" | grep -E "lost|ERROR SUMMARY: [^0]|Open file|Invalid" > /dev/null; then
@@ -49,3 +52,6 @@ function vrun() {
 		printf "%s\e[0;92m\nNo valgrind errors found!\n\e[0m" $result
 	fi
 }
+
+eval "$(zoxide init zsh)"
+
