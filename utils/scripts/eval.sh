@@ -10,7 +10,7 @@ UNDERLINE=$'\033[4m'
 RESET=$'\033[0m'
 
 prog_name="$1"
-allowed_funcs="${@:2}"
+allowed_funcs=( "${@:2}" )
 
 norm_check () {
 	printf "%sRunning norminette...%s" "$LIGHT_BLUE" "$RESET"
@@ -43,17 +43,36 @@ header_check() {
 }
 
 nm_check() {
-	for arg in "$allowed_funcs"; do
-		printf "arg: %s\n" $arg
-	done
-	if [[ $1 ]]; then
-	
-		printf "arg was provided: %s\n" $1
-	fi
-	printf "%sChecking for functions...%s" "$LIGHT_BLUE" "$RESET"
+	printf "%sChecking for forbidden functions...%s" "$LIGHT_BLUE" "$RESET"
 	printf "\r"; tput el
-	# Check if $1 exist, for each arg do nm-u?
-	nm -u $1 | awk '{$1=$1};1' | awk -vORS="" -F"[ @]" '/U/ && !/__/{ if (NR>1) printf ", ";print $2 } END { printf "\n" }'
+	if [[ $1 ]]; then
+		local used_functions=($(nm -u $1 | awk '{$1=$1};1' | awk -vORS="" -F"[ @]" '/U/ && !/__/{ if (NR>1) printf ", ";print $2 } END { printf "\n" }'))
+		if [[ $2 ]]; then
+			local sorted_used=($(
+			for function in "${used_functions[@]}"
+			do
+				echo "${function//,}"
+			done | sort
+			))
+
+			local sorted=($(
+			for arg in "${@:2}"
+			do
+				echo "${arg//,}"
+			done | sort
+			))
+
+			local mismatches="$(comm -23 <(printf "%s\n" "${sorted_used[@]}") <(printf "%s\n" "${sorted[@]}"))"
+		fi
+		if [[ $mismatches ]]; then
+			printf "%sForbidden functions found!\n%s%s\n%s\nThere may be false positives; search the source code manually.%s\n\n" "$RED" "$RESET" "$mismatches" "$LIGHT_BLUE" "$RESET"
+		# else
+			# printf "%sFunctions used (manual check):\n%s%s\n\n" "$LIGHT_BLUE" "$RESET" ${sorted_used[@]} THIS NO WORK
+		fi
+	else
+		printf "No program name provided, skipping forbidden function check\n"
+	fi
+
 }
 
 norm_check
