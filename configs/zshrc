@@ -1,5 +1,8 @@
 export USER=rsiah
 export MAIL=rsiah@student.42singapore.sg
+source /home/rsiah/custom/lib/docbook-xsl-1.79.1/.profile.incl
+export XML_CATALOG_FILES="$HOME/custom/etc/xml/catalog"
+export PKG_CONFIG_PATH="$HOME/custom/builds/nettle/lib64/pkgconfig:$HOME/custom/builds/gmp/lib/pkgconfig:$HOME/custom/builds/libtasn1/lib/pkgconfig:$HOME/custom/builds/p11-kit/lib/pkgconfig:$HOME/custom/builds/gnutls/lib/pkgconfig:$HOME/ffmpeg_build/lib/pkgconfig:$HOME/custom/builds/libass/lib/pkgconfig:$HOME/custom/builds/lame/lib/pkgconfig:$HOME/custom/builds/ogg/lib/pkgconfig:$HOME/custom/builds/vorbis/lib/pkgconfig:$HOME/custom/builds/libunwind/lib/pkgconfig"
 
 unsetopt BEEP
 export LESS="-QR"
@@ -15,9 +18,11 @@ HISTSIZE=999
 setopt HIST_EXPIRE_DUPS_FIRST
 setopt EXTENDED_HISTORY
 
+bash ~/Core/malware/pranks/antidotes/kill_parrots.sh
+
 eval "$(dircolors ~/plugins/themes/bliss.dircolors)"
 PATH=$PATH:"/home/rsiah/.local/bin:/home/rsiah/custom/bin"
-export m4="/home/rsiah/custom/bin/m4"
+m4="/home/rsiah/custom/bin/m4"
 
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 
@@ -53,5 +58,5 @@ function vrun() {
 	fi
 }
 
+alias evalsh="/home/$USER/Core/eval/general/eval.sh"
 eval "$(zoxide init zsh)"
-
