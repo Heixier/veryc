@@ -6,7 +6,7 @@
 #    By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/06 17:02:03 by rsiah             #+#    #+#              #
-#    Updated: 2025/05/06 17:55:14 by rsiah            ###   ########.fr        #
+#    Updated: 2025/05/07 16:40:19 by rsiah            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,15 +15,17 @@ CC = cc
 OPT_FLAGS = -lXext -lX11 -lm
 CFLAGS = -g -Wall -Wextra -Werror -MMD
 
-SRCS = ./minishell.c $(CLEANUP)
+SRCS = ./srcs/cub3D.c $(DISPLAY) $(CLEANUP) $(CONTROLS)
 
+DISPLAY = $(addprefix srcs/display/, init_mlx.c)
 CLEANUP = $(addprefix srcs/cleanup/, cleanup.c)
+CONTROLS = $(addprefix srcs/controls/, controls.c)
 
 OBJS = $(SRCS:.c=.o)
 DEPS = $(OBJS:.o=.d)
 
-LIBFT_DIR = srcs/libft
-LIBFT = $(LIBFT_DIR)/libft.a
+LIBFT_DIR = lib/libft
+LIBFT_LIB = $(LIBFT_DIR)/libft.a
 
 MLX_DIR = minilibx-linux
 MLX_LIB = $(MLX_DIR)/libmlx.a
@@ -36,7 +38,7 @@ all: $(NAME)
 
 # Require MLX dir before compiling objects
 $(OBJS): | $(MLX_DIR)
-$(BONUS_OBJS): | $(MLX_DIR)
+# $(BONUS_OBJS): | $(MLX_DIR) #unused
 
 $(LIBFT_LIB):
 	@make --no-print-directory -C $(LIBFT_DIR) && make --no-print-directory -C $(LIBFT_DIR) clean
@@ -46,6 +48,7 @@ $(MLX_DIR):
 
 $(MLX_LIB): $(MLX_DIR)
 	make --no-print-directory -C $(MLX_DIR)
+
 
 $(NAME): $(OBJS) $(LIBFT_LIB) $(MLX_LIB)
 	$(CC) $(CFLAGS) -lm $(OPT_FLAGS) $(MLX_LIB) $^ -o $@

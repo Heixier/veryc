@@ -1,30 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cub3D.c                                            :+:      :+:    :+:   */
+/*   cleanup.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/06 17:34:54 by rsiah             #+#    #+#             */
-/*   Updated: 2025/05/07 17:12:55 by rsiah            ###   ########.fr       */
+/*   Created: 2025/05/07 14:01:45 by rsiah             #+#    #+#             */
+/*   Updated: 2025/05/07 17:13:36 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../lib/cub3d.h"
+#include "../../lib/cub3d.h"
 
-int main(int argc, char **argv)
+void	free_mlx(t_game *game)
 {
-	t_game	*game;
+	if (game -> win)
+		(mlx_destroy_window(game -> mlx, game -> win), game -> win = NULL);
+	if (game -> mlx)
+		(mlx_destroy_display(game -> mlx), ft_free((void **)&game -> mlx));
+}
 
-	if (!argc && !argv)
-		return (0);
-	game = init_game();
+void	free_game(t_game *game)
+{
 	if (!game)
-		return (1);
-	// mlx_loop_hook(game -> mlx, NULL, NULL); // add rendering stuff later later
-	mlx_hook(game -> win, 17, 0L, mlx_loop_end, game -> mlx); // close window
-	mlx_key_hook(game -> win, key_handler, game);
-	mlx_loop(game -> mlx);
-	free_game(game);
-	printf ("done\n");
+		return ;
+	if (game -> mlx)
+		free_mlx(game);
+	ft_free((void **)&game);
+	printf("cleanupped\n");
 }

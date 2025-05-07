@@ -1,0 +1,14 @@
+{
+  "files.associations": {
+    "includes.h": "c",
+    "libft.h": "c",
+    "structs.h": "c",
+    "mlx.h": "c",
+    "cub3d.h": "c",
+    "cleanup.h": "c",
+    "display.h": "c",
+    "controls.h": "c",
+    "fcntl.h": "c",
+    "keysymdef.h": "c"
+  }
+}
