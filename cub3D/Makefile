@@ -6,13 +6,13 @@
 #    By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/05/06 17:02:03 by rsiah             #+#    #+#              #
-#    Updated: 2025/05/06 17:02:49 by rsiah            ###   ########.fr        #
+#    Updated: 2025/05/06 17:55:14 by rsiah            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = cub3D
 CC = cc
-MLX_FLAGS = -lXext -lX11
+OPT_FLAGS = -lXext -lX11 -lm
 CFLAGS = -g -Wall -Wextra -Werror -MMD
 
 SRCS = ./minishell.c $(CLEANUP)
@@ -48,7 +48,7 @@ $(MLX_LIB): $(MLX_DIR)
 	make --no-print-directory -C $(MLX_DIR)
 
 $(NAME): $(OBJS) $(LIBFT_LIB) $(MLX_LIB)
-	$(CC) $(CFLAGS) -lm $(MLX_FLAGS) $(MLX_LIB) $^ -o $@
+	$(CC) $(CFLAGS) -lm $(OPT_FLAGS) $(MLX_LIB) $^ -o $@
 
 clean:
 	rm -rf $(OBJS) $(BONUS_OBJS) $(DEPS) $(BONUS_DEPS) $(LIBFT_LIB) $(MLX_LIB)
