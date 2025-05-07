@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@42singapore.sg>               +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 17:34:54 by rsiah             #+#    #+#             */
-/*   Updated: 2025/05/07 17:12:55 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/05/07 21:28:36 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,8 @@ int main(int argc, char **argv)
 	game = init_game();
 	if (!game)
 		return (1);
-	// mlx_loop_hook(game -> mlx, NULL, NULL); // add rendering stuff later later
-	mlx_hook(game -> win, 17, 0L, mlx_loop_end, game -> mlx); // close window
-	mlx_key_hook(game -> win, key_handler, game);
-	mlx_loop(game -> mlx);
+	main_loop(game);
+
 	free_game(game);
 	printf ("done\n");
 }
