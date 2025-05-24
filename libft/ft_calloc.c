@@ -6,7 +6,7 @@
 /*   By: rsiah <rsiah@student.42singapore.sg>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 16:20:26 by rsiah             #+#    #+#             */
-/*   Updated: 2024/05/17 16:20:27 by rsiah            ###   ########.fr       */
+/*   Updated: 2025/05/24 22:41:38 by rsiah            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	*ft_calloc(size_t nmemb, size_t size)
 	size_t	n;
 
 	if (nmemb == 0 || size == 0)
-		return (NULL);
+		return (malloc(0));
 
 	n = nmemb * size;
 	if (n / nmemb != size)
